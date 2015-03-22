@@ -1,22 +1,25 @@
 $(function() {
-	var switcher = $('.switcher'),
-		content = $('.content');
+	var content = localStorage.getItem('content'),
+		$switcher = $('.switcher'),
+		$content = $('.content');
 
-	switcher.on('click', function(e) {
+	if (content) {
+		$content.html(content);
+	}
+
+	$switcher.on('click', function(e) {
 		e.preventDefault();
 
-		console.log(content.attr('contenteditable'));
-
-		if (content.attr('contenteditable') == 'false') {
-			content.attr('contenteditable', true);
-			switcher.text('Disable');
+		if ($content.attr('contenteditable') == 'false') {
+			$content.attr('contenteditable', true);
+			$switcher.text('Disable');
 		} else {
-			content.attr('contenteditable', false);
-			switcher.text('Enable');
+			$content.attr('contenteditable', false);
+			$switcher.text('Enable');
 		}
 	});
 
-	content.on('DOMSubtreeModified', function() {
-		console.log('edited');
+	$content.on('DOMSubtreeModified', function() {
+		localStorage.setItem('content', $content.html());
 	});
 });
