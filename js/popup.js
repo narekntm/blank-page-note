@@ -1,8 +1,11 @@
 var bgPage = chrome.extension.getBackgroundPage();
 
-window.onload = function () { console.log(bgPage);
+window.onload = function () {
 	if (bgPage.loggedIn) {
-		document.getElementById("content").innerHTML = "Logged in";
+		bgPage.client.getAccountInfo(function(error, accountInfo) {
+			document.getElementById("content").innerHTML = 'Hello, <b>' + accountInfo.name + '</b>!';
+		});
+
 		document.getElementById("dbLoginLogoutBtn").innerHTML = "Log Out";
 	} else {
 		document.getElementById("content").innerHTML = "Not logged in";

@@ -5,11 +5,20 @@
 	"version": "0.2",
 	"incognito": "split",
 
+	"icons": {
+		"24": "assets/24.png",
+		"48": "assets/48.png",
+		"64": "assets/64.png",
+		"128": "assets/128.png",
+		"256": "assets/256.png"
+	},
+
 	"chrome_url_overrides": {
 		"newtab": "blank.html"
 	},
 
 	"browser_action": {
+		"default_icon": "assets/icon.png",
 		"default_popup": "popup.html"
 	},
 
