@@ -1,24 +1,29 @@
-var bgPage = chrome.extension.getBackgroundPage();
+var bgPage = chrome.extension.getBackgroundPage(),
+	client = bgPage.client;
 
-window.onload = function () {
+$(function() {
+	var $loginLogoutButton = $(".login"),
+		$content = $('.content');
+
 	if (bgPage.loggedIn) {
-		bgPage.client.getAccountInfo(function(error, accountInfo) {
-			document.getElementById("content").innerHTML = 'Hello, <b>' + accountInfo.name + '</b>!';
+		client.getAccountInfo(function(error, accountInfo) {
+			$content.html('Hello, <b>' + accountInfo.name + '</b>!');
 		});
 
-		document.getElementById("dbLoginLogoutBtn").innerHTML = "Log Out";
+		$loginLogoutButton.html('Log Out');
 	} else {
-		document.getElementById("content").innerHTML = "Not logged in";
-		document.getElementById("dbLoginLogoutBtn").innerHTML = "Login with Dropbox";
+		$content.html('Not logged in');
+		$loginLogoutButton.text('Login with Dropbox');
 	}
 
-	document.getElementById("dbLoginLogoutBtn").onclick = function () {
+	$loginLogoutButton.click(function() {
 		if (bgPage.loggedIn) {
 			bgPage.signoutBtnPress();
 
-			window.close();
+			$content.html('Not logged in');
+			$loginLogoutButton.text('Login with Dropbox');
 		} else {
 			bgPage.authBtnPress();
 		}
-	};
-};
+	});
+});

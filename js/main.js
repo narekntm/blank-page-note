@@ -40,21 +40,15 @@ $(function() {
 				client = bgPage.client;
 
 			if (bgPage.loggedIn) {
-//				client.readFile("md_blank.txt", function(error, data) {
-//					if (error) {
-						client.writeFile("md_blank.txt", content, function(error, stat) {
-							if (error) {
-								return console.log(error);
-							}
+				client.writeFile("md_blank.txt", content, function(error, stat) {
+					if (error) {
+						return console.log(error);
+					}
 
-							console.log("File saved as revision " + stat.versionTag);
-						});
+					console.log("File saved as revision " + stat.versionTag);
+				});
 
-						return false;
-//					}
-
-//					console.log(data);
-//				});
+				return false;
 			} else {
 				console.log('Not logged in');
 			}

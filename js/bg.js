@@ -12,7 +12,7 @@ client.authenticate({interactive: false}, function (error) {
 });
 
 
-function authBtnPress() {
+function authBtnPress(callback) {
 	if (!loggedIn) {
 		client.authenticate({}, function (error) {
 			if (error) {
@@ -35,3 +35,7 @@ function signoutBtnPress() {
 		});
 	}
 }
+
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+	window.open('sync.html', 'new');
+});

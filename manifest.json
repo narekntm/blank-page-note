@@ -5,6 +5,8 @@
 	"version": "0.2",
 	"incognito": "split",
 
+	"key": "leeknlfafokhgcakflmdcgpfccloagkd",
+
 	"icons": {
 		"24": "assets/24.png",
 		"48": "assets/48.png",
@@ -24,7 +26,8 @@
 
 	"permissions": [
 		"https://*.dropbox.com/",
-		"storage"
+		"storage",
+		"gcm"
 	],
 
 	"background": {
