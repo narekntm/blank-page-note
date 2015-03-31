@@ -54,4 +54,24 @@ $(function() {
 			}
 		}
 	});
+
+	// to force focus and change css style
+	$('code').attr('tabindex', 0);
+
+	// Select and copy on click
+	$('code').oneClickSelect();
 });
+
+$.fn.oneClickSelect = function() {
+	return $(this).on('click', function() {
+		var range, selection;
+
+		selection = window.getSelection();
+		range = document.createRange();
+		range.selectNodeContents(this);
+		selection.removeAllRanges();
+		selection.addRange(range);
+
+		document.execCommand('copy');
+	});
+};

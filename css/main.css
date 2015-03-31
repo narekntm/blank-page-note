@@ -51,3 +51,10 @@ footer {
 	float: right;
 	width: 48%;
 }
+
+code::selection {
+	background: transparent;
+}
+code:focus {
+	background: #f2be38;
+}
