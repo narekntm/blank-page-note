@@ -72,6 +72,7 @@ $.fn.oneClickSelect = function() {
 		selection.removeAllRanges();
 		selection.addRange(range);
 
+		// Copy to clipboard
 		document.execCommand('copy');
 	});
 };

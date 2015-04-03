@@ -1,27 +1,32 @@
 var bgPage = chrome.extension.getBackgroundPage(),
-	client = bgPage.client;
+	client = bgPage.client,
+	account = localStorage.getItem('account');
 
 $(function() {
 	var $loginLogoutButton = $(".login"),
 		$content = $('.content');
 
 	if (bgPage.loggedIn) {
-		client.getAccountInfo(function(error, accountInfo) {
-			$content.html('Hello, <b>' + accountInfo.name + '</b>!');
-		});
+		if (!account) {
+			client.getAccountInfo(function(error, accountInfo) {
+				$content.html('Hey, <b class="text-primary">' + accountInfo.name + '!</b>');
+			});
+		} else {
+			$content.html('Hey, <b class="text-primary">' + account + '!</b>');
+		}
 
-		$loginLogoutButton.html('Log Out');
+		$loginLogoutButton.html('Disconnect from Dropbox');
 	} else {
-		$content.html('Not logged in');
-		$loginLogoutButton.text('Login with Dropbox');
+		$content.html('<span class="text-muted">Status:</span> not synced');
+		$loginLogoutButton.text('Sync with Dropbox');
 	}
 
 	$loginLogoutButton.click(function() {
 		if (bgPage.loggedIn) {
 			bgPage.signoutBtnPress();
 
-			$content.html('Not logged in');
-			$loginLogoutButton.text('Login with Dropbox');
+			$content.html('<span class="text-muted">Status:</span> not synced');
+			$loginLogoutButton.text('Sync with Dropbox');
 		} else {
 			bgPage.authBtnPress();
 		}

@@ -5,6 +5,10 @@ var bgPage = chrome.extension.getBackgroundPage(),
 
 $(function() {
 	setTimeout(function() {
+		client.getAccountInfo(function(error, accountInfo) {
+			localStorage.setItem('account', accountInfo.name);
+		});
+
 		if (bgPage.loggedIn) {
 			local = localStorage.getItem('content');
 
