@@ -1,18 +1,12 @@
 {
-	"name": "Blank Page Note",
+	"name": "Blank Page Notes",
 	"description": "To take notes directly from chrome's blank page",
 	"manifest_version": 2,
-	"version": "0.2",
-	"incognito": "split",
-
-	"key": "leeknlfafokhgcakflmdcgpfccloagkd",
+	"version": "1.0",
 
 	"icons": {
 		"24": "assets/24.png",
-		"48": "assets/48.png",
-		"64": "assets/64.png",
-		"128": "assets/128.png",
-		"256": "assets/256.png"
+		"128": "assets/128.png"
 	},
 
 	"chrome_url_overrides": {
@@ -26,8 +20,7 @@
 
 	"permissions": [
 		"https://*.dropbox.com/",
-		"storage",
-		"gcm"
+		"storage"
 	],
 
 	"background": {
