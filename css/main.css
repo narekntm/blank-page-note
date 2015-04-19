@@ -25,7 +25,12 @@ footer {
 .btn:hover {
 	color: #222;
 }
-
+.pull-right {
+	float: right;
+}
+.copyright {
+	margin-right: 20px;
+}
 
 .editor .preview {
 	margin: 0 auto 50px auto;
@@ -57,4 +62,12 @@ code::selection {
 }
 code:focus {
 	background: #f2be38;
+}
+code {
+	cursor: pointer;
+}
+.markdown-body code:focus {
+	border-color: rgb(137, 37, 0);
+	color: rgb(137, 37, 0);
+	text-shadow: 1px 1px 0 rgba(255, 255, 255, .4);
 }

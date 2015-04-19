@@ -2,7 +2,7 @@
 	"name": "Blank Page Notes",
 	"description": "To take notes directly from chrome's blank page",
 	"manifest_version": 2,
-	"version": "1.0",
+	"version": "1.0.1",
 
 	"icons": {
 		"24": "assets/24.png",
