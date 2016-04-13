@@ -1,3 +1,19 @@
+/** fonts **/
+@font-face {
+	font-family: 'Droid Serif';
+	font-style: normal;
+	font-weight: 400;
+	src: local('Droid Serif'), local('DroidSerif'), url(../fonts/0AKsP294HTD-nvJgucYTaI4P5ICox8Kq3LLUNMylGO4.woff2) format('woff2');
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+@font-face {
+	font-family: 'Droid Serif';
+	font-style: normal;
+	font-weight: 700;
+	src: local('Droid Serif Bold'), local('DroidSerif-Bold'), url(../fonts/QQt14e8dY39u-eYBZmppwYlIZu-HDpmDIZMigmsroc4.woff2) format('woff2');
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
 * {
 	font-size: 16px;
 	outline: none;
@@ -11,28 +27,16 @@ footer {
 	position: fixed;
 	bottom: 0;
 	left: 0;
-	padding: 10px;
 	background: #eee;
 	width: 100%;
-	height: 13px;
+	height: 30px;
+	padding: 5px 10px 0 10px;
 }
-
-.btn {
+footer * {
 	font-size: 12px;
-	color: #494949;
-	cursor: pointer;
-}
-.btn:hover {
-	color: #222;
-}
-.pull-right {
-	float: right;
-}
-.copyright {
-	margin-right: 20px;
 }
 
-.editor .preview {
+.editor .markdown-body {
 	margin: 0 auto 50px auto;
 	padding: 10px;
 	width: 100%;
@@ -52,7 +56,7 @@ footer {
 .editor.active .source {
 	display: block;
 }
-.editor.active .preview {
+.editor.active .markdown-body {
 	float: right;
 	width: 48%;
 }
@@ -70,4 +74,11 @@ code {
 	border-color: rgb(137, 37, 0);
 	color: rgb(137, 37, 0);
 	text-shadow: 1px 1px 0 rgba(255, 255, 255, .4);
+}
+.nav {
+	padding-left: 0 !important;
+}
+.new a {
+	box-shadow: none !important;
+	-webkit-box-shadow: none !important;
 }

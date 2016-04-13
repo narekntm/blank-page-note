@@ -1,22 +1,37 @@
 $(function() {
+	setupEditor();
+	migrate();
+	setupEnv();
+});
+
+$.fn.oneClickSelect = function() {
+	return $(this).on('click', function() {
+		var range, selection;
+
+		selection = window.getSelection();
+		range = document.createRange();
+		range.selectNodeContents(this);
+		selection.removeAllRanges();
+		selection.addRange(range);
+
+		// Copy to clipboard
+		document.execCommand('copy');
+	});
+};
+
+function setupEnv() {
 	var content = localStorage.getItem('content'),
-		$editor = $('.editor'),
-		$source = $('.source'),
-		$preview = $('.preview'),
-		$switcher = $('.switcher'),
-		converter = new Showdown.converter();
+			$editor = $('.editor'),
+			$source = $('.source'),
+			$preview = $('.preview'),
+			$switcher = $('.switcher'),
+			converter = new Showdown.converter();
 
 	if (!content || content == '') {
 		content = 'Don\'t make me think...';
 	}
 
 	$source.val(content);
-
-	$(window).resize(function() {
-		$source.css({
-			height: (window.innerHeight - 53) + 'px'
-		});
-	}).trigger('resize');
 
 	$source.keyup(function() {
 		content = $source.val();
@@ -43,19 +58,16 @@ $(function() {
 
 	// Select and copy on click
 	$('code').oneClickSelect();
-});
+}
 
-$.fn.oneClickSelect = function() {
-	return $(this).on('click', function() {
-		var range, selection;
+function migrate() {
 
-		selection = window.getSelection();
-		range = document.createRange();
-		range.selectNodeContents(this);
-		selection.removeAllRanges();
-		selection.addRange(range);
+}
 
-		// Copy to clipboard
-		document.execCommand('copy');
-	});
-};
+function setupEditor() {
+	$(window).resize(function() {
+		$('.source').css({
+			height: (window.innerHeight - 53) + 'px'
+		});
+	}).trigger('resize');
+}
