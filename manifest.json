@@ -13,27 +13,11 @@
 		"newtab": "blank.html"
 	},
 
-	"browser_action": {
-		"default_icon": "assets/icon.png",
-		"default_popup": "popup.html"
-	},
-
 	"permissions": [
-		"https://*.dropbox.com/",
 		"storage"
 	],
 
 	"background": {
 		"page": "bg.html"
-	},
-
-	"content_security_policy": "script-src 'self' https://www.dropbox.com; object-src 'self'",
-
-	"externally_connectable": {
-		"matches": ["https://*.dropbox.com/*"]
-	},
-
-	"web_accessible_resources": [
-		"chrome_oauth_receiver.html"
-	]
+	}
 }

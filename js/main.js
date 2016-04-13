@@ -35,23 +35,6 @@ $(function() {
 		} else {
 			$editor.removeClass('active');
 			$switcher.text('Enable');
-
-			var bgPage = chrome.extension.getBackgroundPage(),
-				client = bgPage.client;
-
-			if (bgPage.loggedIn) {
-				client.writeFile("md_blank.txt", content, function(error, stat) {
-					if (error) {
-						return console.log(error);
-					}
-
-					console.log("File saved as revision " + stat.versionTag);
-				});
-
-				return false;
-			} else {
-				console.log('Not logged in');
-			}
 		}
 	});
 
