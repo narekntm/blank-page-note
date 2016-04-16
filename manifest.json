@@ -15,9 +15,5 @@
 
 	"permissions": [
 		"storage"
-	],
-
-	"background": {
-		"page": "bg.html"
-	}
+	]
 }

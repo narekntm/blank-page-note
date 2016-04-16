@@ -12,16 +12,18 @@
 <body>
 	<section class="editor">
 		<textarea class="source"></textarea>
+
 		<div class="markdown-body">
 			<div>
-				<ul class="nav nav-tabs" role="tablist">
-					<li class="active">
-						<a href="#general" data-toggle="tab">General</a>
-					</li>
-					<li class="pull-right new">
-						<a href="#new" data-toggle="tab">New Tab</a>
+				<ul class="nav nav-tabs pull-left tabs" role="tablist">
+					<li class="tab-template hide">
+						<a href="#template" data-toggle="tab">{{template}}</a>
 					</li>
 				</ul>
+
+				<div class="pull-right">
+					<button href="#new" class="new btn btn-lg" data-toggle="tab">New Tab</button>
+				</div>
 			</div>
 
 			<div class="preview"></div>
