@@ -82,3 +82,25 @@ code {
 	box-shadow: none !important;
 	-webkit-box-shadow: none !important;
 }
+.delete-tab {
+	font-size: 90%;
+	visibility: hidden;
+}
+a:hover .delete-tab {
+	visibility: visible;
+}
+a .delete-tab:hover {
+	color: #a94442;
+	cursor: pointer;
+}
+.tab-name-input {
+	border: 0;
+	outline: none;
+	background: #fff;
+}
+.tab a:hover .tab-name-input {
+	background: #eee;
+}
+.tab.active a:hover .tab-name-input {
+	background: #fff;
+}

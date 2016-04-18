@@ -89,8 +89,9 @@ function drawTab(name) {
 		.removeClass('tab-template')
 		.removeClass('hide')
 		.addClass('tab')
-		.find('a').attr('href', '#' + clearName)
-		.text(name);
+		.find('a').attr('href', '#' + clearName);
+
+	tab.find('.tab-name-input').val(name);
 
 	$('.tabs').append(tab);
 
