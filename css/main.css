@@ -104,3 +104,12 @@ a .delete-tab:hover {
 .tab.active a:hover .tab-name-input {
 	background: #fff;
 }
+.main-nav {
+	position: relative;
+}
+.add-new-tab {
+	position: absolute;
+	right: 0;
+	top: 0;
+	margin: 15px;
+}

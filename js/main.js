@@ -10,6 +10,12 @@ $(function() {
 
 		drawTab('New Tab');
 	});
+
+	$('.nav').on('click', '.delete-tab', function(e) {
+		e.preventDefault();
+
+		$(this).closest('li').remove();
+	})
 });
 
 $.fn.oneClickSelect = function() {
