@@ -41,7 +41,8 @@ function setupEnv() {
 		converter = new Showdown.converter();
 
 	drawTabs();
-	setTabActive();
+	var activeTabId = setTabActive();
+	drawTabContent(activeTabId);
 
 	//$source.keyup(function() {
 	//	var tabContentSource = $source.val(),
@@ -55,24 +56,43 @@ function setupEnv() {
 	//	localStorage.setItem('content', content);
 	//}).trigger('keyup');
 	//
-	//$switcher.on('click', function(e) {
-	//	e.preventDefault();
-	//
-	//	if ($switcher.text() == 'Enable') {
-	//		$editor.addClass('active');
-	//		$source.trigger('input');
-	//		$switcher.text('Disable');
-	//	} else {
-	//		$editor.removeClass('active');
-	//		$switcher.text('Enable');
-	//	}
-	//});
+	$switcher.on('click', function(e) {
+		e.preventDefault();
+
+		if ($switcher.text() == 'Enable') {
+			$editor.addClass('active');
+			$source.trigger('input');
+			$switcher.text('Disable');
+		} else {
+			$editor.removeClass('active');
+			$switcher.text('Enable');
+		}
+	});
 	//
 	//// to force focus and change css style
 	//$('code').attr('tabindex', 0);
 	//
 	//// Select and copy on click
 	//$('code').oneClickSelect();
+}
+
+function drawTabContent(tabId) {
+	var tabData = getTabData(tabId),
+		converter = new Showdown.converter(),
+		tabContentMd = tabData.content;
+
+	if (tabData === false) {
+		alert('Cannot draw a tab with id #' + tabId);
+
+		return false;
+	}
+
+	$('.source').val(tabContentMd);
+	$('.preview').html(
+		converter.makeHtml(
+			converter.makeHtml(tabContentMd)
+		)
+	);
 }
 
 function drawTabs() {
@@ -131,7 +151,10 @@ function removeTabId(tabId) {
 }
 
 function setTabActive() {
-	$('.tab').eq(0).addClass('active');
+	var firstTab = $('.tab').eq(0);
+	firstTab.addClass('active');
+
+	return firstTab.find('a').attr('data-id');
 }
 
 function migrate() {
