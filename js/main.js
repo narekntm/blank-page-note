@@ -76,36 +76,54 @@ function setupEnv() {
 }
 
 function drawTabs() {
-	for (var localStorageItem in localStorage) {
-		if (localStorage.hasOwnProperty(localStorageItem)) {
-			if (localStorageItem == 'v') {
-				return true;
-			}
+	var data = JSON.parse(localStorage.getItem('ids'));
 
-			drawTab(localStorageItem);
+	for (var tabId in data) {
+		if (data.hasOwnProperty(tabId)) {
+			drawTab(data[tabId]);
 		}
 	}
 }
 
-function drawTab(name) {
-	var tab = $('.tab-template.hide').clone(),
-		clearName = sanitizeTabName(name);
+function drawTab(tabId) {
+	var tabEl = $('.tab-template.hide').clone(),
+		tabData = getTabData(tabId);
 
-	tab
+	tabEl
 		.removeClass('tab-template')
 		.removeClass('hide')
 		.addClass('tab')
-		.find('a').attr('href', '#' + clearName);
+		.find('a').attr({
+			'href': '#' + tabData.name,
+			'data-id': tabId,
+			'title': tabData.content
+		});
 
-	tab.find('.tab-name-input').val(name);
+	tabEl.find('.tab-name-input').val(tabData.name);
 
-	$('.tabs').append(tab);
-
-	return clearName;
+	$('.tabs').append(tabEl);
 }
 
-function sanitizeTabName(name) {
-	return name.toLowerCase().replace(/[^a-z0-9]/i, '');
+function getTabData(tabId) {
+	var tabData = JSON.parse(localStorage.getItem('data'));
+
+	if (tabData.hasOwnProperty(tabId)) {
+		return tabData[tabId];
+	}
+
+	removeTabId(tabId);
+
+	return false;
+}
+
+function removeTabId(tabId) {
+	var tabIdList = JSON.parse(localStorage.getItem('ids'));
+
+	for (var id in tabIdList) {
+		if (id == tabId) {
+			delete tabIdList[tabId];
+		}
+	}
 }
 
 function setTabActive() {
@@ -114,7 +132,13 @@ function setTabActive() {
 
 function migrate() {
 	if (localStorage.getItem('v') == 1) {
-		localStorage.setItem('General', localStorage.getItem('content'));
+		localStorage.setItem('data', JSON.stringify({
+			1: {
+				name: 'General',
+				content: localStorage.getItem('content')
+			}
+		}));
+		localStorage.setItem('ids', JSON.stringify([1]));
 	}
 
 	if (localStorage.hasOwnProperty('account')) {
