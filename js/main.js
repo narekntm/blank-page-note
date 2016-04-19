@@ -78,16 +78,20 @@ function setupEnv() {
 function drawTabs() {
 	var data = JSON.parse(localStorage.getItem('ids'));
 
-	for (var tabId in data) {
-		if (data.hasOwnProperty(tabId)) {
-			drawTab(data[tabId]);
+	for (var index in data) {
+		if (data.hasOwnProperty(index)) {
+			drawTab(data[index], index == 0);
 		}
 	}
 }
 
-function drawTab(tabId) {
+function drawTab(tabId, persistant) {
 	var tabEl = $('.tab-template.hide').clone(),
 		tabData = getTabData(tabId);
+
+	if (persistant) {
+		tabEl.find('.delete-tab').remove();
+	}
 
 	tabEl
 		.removeClass('tab-template')
