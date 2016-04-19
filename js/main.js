@@ -1,6 +1,8 @@
 var db;
 
 $(function() {
+	var code = $('code');
+
 	setupEditor();
 	migrate();
 	setupEnv();
@@ -15,7 +17,13 @@ $(function() {
 		e.preventDefault();
 
 		$(this).closest('li').remove();
-	})
+	});
+
+	// to force focus and change css style
+	code.attr('tabindex', 0);
+
+	// Select and copy on click
+	code.oneClickSelect();
 });
 
 $.fn.oneClickSelect = function() {
@@ -34,46 +42,45 @@ $.fn.oneClickSelect = function() {
 };
 
 function setupEnv() {
-	var $editor = $('.editor'),
-		$source = $('.source'),
-		$preview = $('.preview'),
-		$switcher = $('.switcher'),
+	var editor = $('.editor'),
+		source = $('.source'),
+		preview = $('.preview'),
+		switcher = $('.switcher'),
 		converter = new Showdown.converter();
 
 	drawTabs();
 	var activeTabId = setTabActive();
-	drawTabContent(activeTabId);
 
-	//$source.keyup(function() {
-	//	var tabContentSource = $source.val(),
-	//		tabContentPreview = converter.makeHtml(tabContentSource),
-	//		activeTabIndex = $('.tabs li.active').attr('data-index');
-	//
-	//	content[activeTabIndex] = tabContentSource;
-	//
-	//	$preview.html(tabContentPreview);
-	//
-	//	localStorage.setItem('content', content);
-	//}).trigger('keyup');
-	//
-	$switcher.on('click', function(e) {
-		e.preventDefault();
+	if (drawTabContent(activeTabId)) {
+		source.keyup(function () {
+			var tabContentSource = source.val(),
+				tabContentPreview = converter.makeHtml(tabContentSource),
+				tabId = $('.tabs li.active a').attr('data-id');
 
-		if ($switcher.text() == 'Enable') {
-			$editor.addClass('active');
-			$source.trigger('input');
-			$switcher.text('Disable');
-		} else {
-			$editor.removeClass('active');
-			$switcher.text('Enable');
-		}
-	});
-	//
-	//// to force focus and change css style
-	//$('code').attr('tabindex', 0);
-	//
-	//// Select and copy on click
-	//$('code').oneClickSelect();
+			saveTabContent(tabId, tabContentSource);
+			preview.html(tabContentPreview);
+		});
+
+		switcher.on('click', function (e) {
+			e.preventDefault();
+
+			if (switcher.text() == 'Enable') {
+				editor.addClass('active');
+				source.trigger('input');
+				switcher.text('Disable');
+			} else {
+				editor.removeClass('active');
+				switcher.text('Enable');
+			}
+		});
+	}
+}
+
+function saveTabContent(tabId, tabContent) {
+	var tabsData = JSON.parse(localStorage.getItem('data'));
+
+	tabsData[tabId]['content'] = tabContent;
+	localStorage.setItem('data', JSON.stringify(tabsData));
 }
 
 function drawTabContent(tabId) {
@@ -93,6 +100,8 @@ function drawTabContent(tabId) {
 			converter.makeHtml(tabContentMd)
 		)
 	);
+
+	return true;
 }
 
 function drawTabs() {
