@@ -196,7 +196,7 @@ function drawTabElement(tabId, tabName, isPersistant) {
 
 	aEl = tabEl.find('a');
 	aEl.attr({
-		'href': '#' + tabName.replace(' ', '_').toLowerCase(),
+		'data-name': '#' + tabName.replace(' ', '_').toLowerCase(),
 		'data-id': tabId,
 	});
 

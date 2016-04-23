@@ -89,13 +89,19 @@ a:hover .delete-tab {
 }
 a .delete-tab:hover {
 	color: #a94442;
-	cursor: pointer;
 }
 .tab-name-input {
 	border: 0;
 	outline: none;
 	background: #fff;
+	color: #888 !important;
 	cursor: pointer;
+}
+.active .tab-name-input {
+	color: #222 !important;
+}
+.tabs a {
+	cursor: pointer !important;
 }
 .tab a:hover .tab-name-input {
 	background: #eee;
@@ -110,7 +116,14 @@ a .delete-tab:hover {
 	position: absolute;
 	right: 0;
 	top: 0;
-	margin: 15px;
+	margin: 4px;
+}
+.add-new-tab button {
+	background: transparent !important;
+}
+.add-new-tab:hover button {
+	background: #eee !important;
+	color: #c7254e !important;
 }
 .clipboard-tooltip {
 	font: 10px/100% Arial;
