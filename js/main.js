@@ -36,7 +36,7 @@ $(function() {
 		switchTab($(this));
 	});
 
-	$(document).on('click', 'code, pre', function() {
+	$(document).on('click', 'code', function() {
 		var range, selection;
 
 		selection = window.getSelection();
@@ -47,11 +47,30 @@ $(function() {
 
 		// Copy to clipboard
 		document.execCommand('copy');
+
+		showTooltip($(this));
 	});
 
 	// to force focus and change css style
 	code.attr('tabindex', 0);
 });
+
+function showTooltip(codeEl) {
+	var tooltip = $('.clipboard-tooltip');
+
+	tooltip
+		.removeClass('pulse')
+		.addClass('pulse');
+
+	tooltip.css({
+		top: codeEl.position().top - 17,
+		left: codeEl.position().left
+	});
+
+	setTimeout(function() {
+		$('.clipboard-tooltip').removeClass('pulse')
+	}, 1000);
+}
 
 function setupEnv() {
 	var editor = $('.editor'),
