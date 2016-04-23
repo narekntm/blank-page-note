@@ -19,15 +19,19 @@ $(function() {
 	$('.nav').on('click', '.delete-tab', function(e) {
 		e.preventDefault();
 
-		$(this).closest('li').remove();
+		deleteTab($(this).closest('li'));
 	});
 
 	$('.tab-name-input').on('input change', function(e) {
 		saveTabName($(this).closest('a').attr('data-id'), $(this).val());
 	});
 
-	$('.tabs').on('click', '.tab-el', function (e) {
+	$('.tabs').on('click', '.tab', function (e) {
 		e.preventDefault();
+
+		if ($(e.target).hasClass('delete-tab')) {
+			return;
+		}
 
 		switchTab($(this));
 	});
@@ -241,6 +245,25 @@ function switchTab(tabEl) {
 
 	$('.tabs > li').removeClass('active');
 	tabEl.addClass('active');
+}
+
+function deleteTab(tabEl) {
+	var idList = JSON.parse(localStorage.getItem('ids')),
+		tabId = parseInt(tabEl.find('a').attr('data-id'));
+
+	for (var i = 0; i < idList.length; i++) {
+		if (idList[i] == tabId) {
+			idList.splice(i, 1);
+			break;
+		}
+	}
+
+	localStorage.setItem('ids', JSON.stringify(idList));
+	tabEl.remove();
+
+	setTimeout(function() {
+		switchTab($('.tab').eq(0));
+	}, 1);
 }
 
 function migrate() {
