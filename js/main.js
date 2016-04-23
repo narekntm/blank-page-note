@@ -36,27 +36,22 @@ $(function() {
 		switchTab($(this));
 	});
 
-	// to force focus and change css style
-	code.attr('tabindex', 0);
-
-	// Select and copy on click
-	code.oneClickSelect();
-});
-
-$.fn.oneClickSelect = function() {
-	return $(this).on('click', function() {
+	$(document).on('click', 'code, pre', function() {
 		var range, selection;
 
 		selection = window.getSelection();
 		range = document.createRange();
-		range.selectNodeContents(this);
+		range.selectNodeContents($(this)[0]);
 		selection.removeAllRanges();
 		selection.addRange(range);
 
 		// Copy to clipboard
 		document.execCommand('copy');
 	});
-};
+
+	// to force focus and change css style
+	code.attr('tabindex', 0);
+});
 
 function setupEnv() {
 	var editor = $('.editor'),
