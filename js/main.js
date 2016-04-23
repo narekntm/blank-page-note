@@ -1,4 +1,7 @@
-var db;
+var converter = new Showdown.converter(),
+
+	NEW_TAB_NAME = 'New Tab',
+	NEW_TAB_CONTENT = 'Don\'t make me think...';
 
 $(function() {
 	var code = $('code');
@@ -10,13 +13,23 @@ $(function() {
 	$('.new').click(function(e) {
 		e.preventDefault();
 
-		drawTab('New Tab');
+		drawNewTab(NEW_TAB_NAME, NEW_TAB_CONTENT);
 	});
 
 	$('.nav').on('click', '.delete-tab', function(e) {
 		e.preventDefault();
 
 		$(this).closest('li').remove();
+	});
+
+	$('.tab-name-input').on('input change', function(e) {
+		saveTabName($(this).closest('a').attr('data-id'), $(this).val());
+	});
+
+	$('.tabs').on('click', '.tab-el', function (e) {
+		e.preventDefault();
+
+		switchTab($(this));
 	});
 
 	// to force focus and change css style
@@ -45,11 +58,10 @@ function setupEnv() {
 	var editor = $('.editor'),
 		source = $('.source'),
 		preview = $('.preview'),
-		switcher = $('.switcher'),
-		converter = new Showdown.converter();
+		switcher = $('.switcher');
 
 	drawTabs();
-	var activeTabId = setTabActive();
+	var activeTabId = setFirstTabActive();
 
 	if (drawTabContent(activeTabId)) {
 		source.keyup(function () {
@@ -83,9 +95,15 @@ function saveTabContent(tabId, tabContent) {
 	localStorage.setItem('data', JSON.stringify(tabsData));
 }
 
+function saveTabName(tabId, tabName) {
+	var tabsData = JSON.parse(localStorage.getItem('data'));
+
+	tabsData[tabId]['name'] = tabName;
+	localStorage.setItem('data', JSON.stringify(tabsData));
+}
+
 function drawTabContent(tabId) {
 	var tabData = getTabData(tabId),
-		converter = new Showdown.converter(),
 		tabContentMd = tabData.content;
 
 	if (tabData === false) {
@@ -114,27 +132,74 @@ function drawTabs() {
 	}
 }
 
-function drawTab(tabId, persistant) {
-	var tabEl = $('.tab-template.hide').clone(),
-		tabData = getTabData(tabId);
+function saveNewTabData(tabId, tabName, tabContent) {
+	var tabData = JSON.parse(localStorage.getItem('data')),
+		idList = JSON.parse(localStorage.getItem('ids'));
 
-	if (persistant) {
+	idList.push(tabId);
+	tabData[tabId] = {
+		name: tabName,
+		content: tabContent
+	};
+
+	localStorage.setItem('ids', JSON.stringify(idList));
+	localStorage.setItem('data', JSON.stringify(tabData));
+}
+
+function drawTab(tabId, isPersistant) {
+	var tabData = getTabData(tabId),
+		tabName = tabData.name;
+
+	drawTabElement(tabId, tabName, isPersistant);
+}
+
+function drawNewTab(tabName, tabContent) {
+	var tabId = getNextTabId(),
+		tabEl;
+
+	tabEl = drawTabElement(tabId, tabName, false);
+
+	saveNewTabData(tabId, tabName, tabContent);
+	switchTab(tabEl);
+}
+
+function drawTabElement(tabId, tabName, isPersistant) {
+	var tabEl = $('.tab-template.hide').clone(),
+		aEl;
+
+	if (isPersistant) {
 		tabEl.find('.delete-tab').remove();
 	}
 
 	tabEl
 		.removeClass('tab-template')
 		.removeClass('hide')
-		.addClass('tab')
-		.find('a').attr({
-			'href': '#' + tabData.name,
-			'data-id': tabId,
-			'title': tabData.content
-		});
+		.addClass('tab');
 
-	tabEl.find('.tab-name-input').val(tabData.name);
+	aEl = tabEl.find('a');
+	aEl.attr({
+		'href': '#' + tabName.replace(' ', '_').toLowerCase(),
+		'data-id': tabId,
+	});
+
+	tabEl.find('.tab-name-input').val(tabName);
 
 	$('.tabs').append(tabEl);
+
+	return tabEl;
+}
+
+function getNextTabId() {
+	var data = JSON.parse(localStorage.data),
+		maxId = 0;
+
+	for (var id in data) {
+		if (id > maxId) {
+			maxId = id;
+		}
+	}
+
+	return ++maxId;
 }
 
 function getTabData(tabId) {
@@ -159,11 +224,23 @@ function removeTabId(tabId) {
 	}
 }
 
-function setTabActive() {
+function setFirstTabActive() {
 	var firstTab = $('.tab').eq(0);
 	firstTab.addClass('active');
 
 	return firstTab.find('a').attr('data-id');
+}
+
+function switchTab(tabEl) {
+	var tabData = JSON.parse(localStorage.getItem('data')),
+		tabId = parseInt(tabEl.find('a').attr('data-id')),
+		tabContent = tabData[tabId]['content'];
+
+	$('.source').val(tabContent);
+	$('.preview').html(converter.makeHtml(tabContent));
+
+	$('.tabs > li').removeClass('active');
+	tabEl.addClass('active');
 }
 
 function migrate() {
@@ -182,7 +259,6 @@ function migrate() {
 	}
 
 	localStorage.removeItem('content');
-
 	localStorage.setItem('v', 2);
 }
 
@@ -198,6 +274,6 @@ function setupEditor() {
 	}
 
 	if (!localStorage.hasOwnProperty('content')) {
-		localStorage.setItem('content', 'Don\'t make me think...');
+		localStorage.setItem('content', NEW_TAB_CONTENT);
 	}
 }
