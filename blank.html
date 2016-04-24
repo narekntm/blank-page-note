@@ -10,28 +10,33 @@
 	<link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-	<section class="editor">
-		<textarea class="source"></textarea>
+<div class="container">
+	<div class="hr"></div>
+	<div class="row main-nav">
+		<ul class="nav nav-tabs tabs" role="tablist">
+			<li class="tab-template hide">
+				<a data-toggle="tab">
+					<input class="tab-name-input input-sm" value="" type="text" placeholder="Tab Name">
+					<i class="glyphicon glyphicon-trash delete-tab" title="Delete Tab"></i>
+				</a>
+			</li>
+		</ul>
 
-		<div class="markdown-body">
-			<div class="main-nav">
-				<ul class="nav nav-tabs tabs" role="tablist">
-					<li class="tab-template hide">
-						<a data-toggle="tab">
-							<input class="tab-name-input input-sm" value="" type="text" placeholder="Tab Name">
-							<i class="glyphicon glyphicon-trash delete-tab" title="Delete Tab"></i>
-						</a>
-					</li>
-				</ul>
-
-				<div class="add-new-tab">
-					<button href="#new" class="new btn" data-toggle="tab">New Tab</button>
-				</div>
-			</div>
-
-			<div class="preview"></div>
+		<div class="add-new-tab">
+			<button href="#new" class="new btn" data-toggle="tab">New Tab</button>
 		</div>
-	</section>
+	</div>
+	<div class="row">
+		<section class="editor">
+			<textarea class="source"></textarea>
+
+			<div class="markdown-body">
+
+				<div class="preview"></div>
+			</div>
+		</section>
+	</div>
+</div>
 
 	<footer>
 		<a href="#switch" class="switcher">Enable</a>

@@ -13,6 +13,10 @@ $(function() {
 	$('.new').click(function(e) {
 		e.preventDefault();
 
+		if ($('.tab').length == 5) {
+			return;
+		}
+
 		drawNewTab(NEW_TAB_NAME, NEW_TAB_CONTENT);
 	});
 
@@ -209,9 +213,12 @@ function drawTabElement(tabId, tabName, isPersistant) {
 
 function getNextTabId() {
 	var data = JSON.parse(localStorage.data),
-		maxId = 0;
+		maxId = 0,
+		id;
 
-	for (var id in data) {
+	for (id in data) {
+		id = parseInt(id);
+
 		if (id > maxId) {
 			maxId = id;
 		}
@@ -302,7 +309,7 @@ function migrate() {
 function setupEditor() {
 	$(window).resize(function() {
 		$('.source').css({
-			height: (window.innerHeight - 53) + 'px'
+			height: (window.innerHeight - 123) + 'px'
 		});
 	}).trigger('resize');
 
