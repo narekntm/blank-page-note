@@ -1,10 +1,11 @@
 var converter = new Showdown.converter(),
 
-	NEW_TAB_NAME = 'New Tab',
+	NEW_TAB_NAME = 'New Tab Name',
 	NEW_TAB_CONTENT = 'Don\'t make me think...';
 
 $(function() {
-	var code = $('code');
+	var code = $('code'),
+		nav = $('.nav');
 
 	setupEditor();
 	migrate();
@@ -20,13 +21,14 @@ $(function() {
 		drawNewTab(NEW_TAB_NAME, NEW_TAB_CONTENT);
 	});
 
-	$('.nav').on('click', '.delete-tab', function(e) {
+	nav.on('click', '.delete-tab', function(e) {
 		e.preventDefault();
 
 		deleteTab($(this).closest('li'));
 	});
 
-	$('.tab-name-input').on('input change', function(e) {
+	nav.on('input change', '.tab-name-input', function(e) {
+		console.log($(this).val());
 		saveTabName($(this).closest('a').attr('data-id'), $(this).val());
 	});
 

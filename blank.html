@@ -1,6 +1,6 @@
 <html>
 <head>
-	<title>Blank Page Note</title>
+	<title>Blank Notes</title>
 
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,37 +10,40 @@
 	<link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-<div class="container">
-	<div class="hr"></div>
-	<div class="row main-nav">
-		<ul class="nav nav-tabs tabs" role="tablist">
-			<li class="tab-template hide">
-				<a data-toggle="tab">
-					<input class="tab-name-input input-sm" value="" type="text" placeholder="Tab Name">
-					<i class="glyphicon glyphicon-trash delete-tab" title="Delete Tab"></i>
-				</a>
-			</li>
-		</ul>
+	<div class="container">
+		<div class="hr"></div>
 
-		<div class="add-new-tab">
-			<button href="#new" class="new btn" data-toggle="tab">New Tab</button>
+		<div class="row main-nav">
+			<ul class="nav nav-tabs tabs" role="tablist">
+				<li class="tab-template hide">
+					<a data-toggle="tab">
+						<input class="tab-name-input input-sm" value="" type="text" placeholder="Tab Name">
+						<i class="glyphicon glyphicon-trash delete-tab" title="Delete Tab"></i>
+					</a>
+				</li>
+			</ul>
+
+			<div class="add-new-tab">
+				<button href="#new" class="new btn" data-toggle="tab">New Tab</button>
+			</div>
+		</div>
+
+		<div class="row">
+			<section class="editor">
+				<textarea class="source"></textarea>
+
+				<div class="markdown-body">
+					<div class="preview"></div>
+				</div>
+			</section>
 		</div>
 	</div>
-	<div class="row">
-		<section class="editor">
-			<textarea class="source"></textarea>
-
-			<div class="markdown-body">
-
-				<div class="preview"></div>
-			</div>
-		</section>
-	</div>
-</div>
 
 	<footer>
 		<a href="#switch" class="switcher">Enable</a>
-		<div class="copyright pull-right">&copy; 2016 <a href="http://jiromm.com" target="_blank">Aram Baghdasaryan</a> v1.2</div>
+		<div class="copyright pull-right">
+			&copy; 2016 <a href="http://jiromm.com" target="_blank">Aram Baghdasaryan</a> v1.2
+		</div>
 	</footer>
 
 	<div class="clipboard-tooltip">Copied to Clipboard</div>
