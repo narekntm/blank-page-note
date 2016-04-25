@@ -21,14 +21,15 @@ $(function() {
 		drawNewTab(NEW_TAB_NAME, NEW_TAB_CONTENT);
 	});
 
-	nav.on('click', '.delete-tab', function(e) {
+	nav.on('click', '.delete-tab', function(e, force) {
 		e.preventDefault();
 
-		deleteTab($(this).closest('li'));
+		if (force) {
+			deleteTab($(this).closest('li'));
+		}
 	});
 
-	nav.on('input change', '.tab-name-input', function(e) {
-		console.log($(this).val());
+	nav.on('input change', '.tab-name-input', function() {
 		saveTabName($(this).closest('a').attr('data-id'), $(this).val());
 	});
 
@@ -55,6 +56,20 @@ $(function() {
 		document.execCommand('copy');
 
 		showTooltip($(this));
+	});
+
+	$('#generic-modal').on('show.bs.modal', function (e) {
+		var deleteBtn = $('.delete-tab-confirm'),
+			button = $(e.relatedTarget),
+			modal = $(this),
+			tabName = button.closest('.tab').find('.tab-name-input').val();
+
+		modal.find('.tab-name').text(tabName);
+
+		deleteBtn.off('click');
+		deleteBtn.on('click', function() {
+			button.trigger('click', [true]);
+		});
 	});
 
 	// to force focus and change css style

@@ -50,6 +50,9 @@ footer {
 footer * {
 	font-size: 12px;
 }
+.modal * {
+	font-size: 14px;
+}
 .nav-tabs {
 	border-bottom: 1px solid #aaa !important;
 }
