@@ -101,11 +101,29 @@ code::selection {
 code {
 	cursor: pointer;
 }
-code:active {
+code:focus {
 	background: #f2be38 !important;
 	border-color: rgb(137, 37, 0) !important;
 	color: rgb(137, 37, 0) !important;
 	text-shadow: 1px 1px 0 rgba(255, 255, 255, .4) !important;
+	position: relative;
+}
+code:focus:after {
+	content: "Copied to clipboard";
+	letter-spacing: 1px;
+	font: 8px/100% Arial;
+	display: inline-block;
+	background: #555;
+	color: #fff;
+	text-shadow: none;
+	font-weight: normal;
+	padding: 3px 6px;
+	border-radius: 1px;
+	position: absolute;
+	left: 0;
+	top: -16px;
+	opacity: 0;
+	animation: 5s pulse linear;
 }
 .nav {
 	padding-left: 0 !important;
@@ -154,19 +172,6 @@ a .delete-tab:hover {
 }
 .add-new-tab:hover button {
 	color: #c7254e !important;
-}
-.clipboard-tooltip {
-	font: 10px/100% Arial;
-	display: inline-block;
-	background: #555;
-	color: #fff;
-	padding: 3px 6px;
-	border-radius: 1px;
-	position: absolute;
-	opacity: 0;
-}
-.pulse {
-	animation: 1s pulse linear;
 }
 @keyframes pulse {
 	0% {

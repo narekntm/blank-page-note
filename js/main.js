@@ -1,4 +1,5 @@
 var converter = new Showdown.converter(),
+	tooltipTimeout,
 
 	NEW_TAB_NAME = 'New Tab Name',
 	NEW_TAB_CONTENT = 'Don\'t make me think...';
@@ -42,7 +43,6 @@ $(function() {
 
 		switchTab($(this));
 	});
-
 	$(document).on('click', 'code', function() {
 		var range, selection;
 
@@ -54,8 +54,6 @@ $(function() {
 
 		// Copy to clipboard
 		document.execCommand('copy');
-
-		showTooltip($(this));
 	});
 
 	$('#generic-modal').on('show.bs.modal', function (e) {
@@ -76,23 +74,6 @@ $(function() {
 	code.attr('tabindex', 0);
 });
 
-function showTooltip(codeEl) {
-	var tooltip = $('.clipboard-tooltip');
-
-	tooltip
-		.removeClass('pulse')
-		.addClass('pulse');
-
-	tooltip.css({
-		top: codeEl.position().top - 17,
-		left: codeEl.position().left
-	});
-
-	setTimeout(function() {
-		$('.clipboard-tooltip').removeClass('pulse')
-	}, 1000);
-}
-
 function setupEnv() {
 	var editor = $('.editor'),
 		source = $('.source'),
@@ -110,6 +91,7 @@ function setupEnv() {
 
 			saveTabContent(tabId, tabContentSource);
 			preview.html(tabContentPreview);
+			preview.find('code').attr('tabindex', 1);
 		});
 
 		switcher.on('click', function (e) {
@@ -156,7 +138,7 @@ function drawTabContent(tabId) {
 		converter.makeHtml(
 			converter.makeHtml(tabContentMd)
 		)
-	);
+	).find('code').attr('tabindex', 1);
 
 	return true;
 }
@@ -279,7 +261,9 @@ function switchTab(tabEl) {
 		tabContent = tabData[tabId]['content'];
 
 	$('.source').val(tabContent);
-	$('.preview').html(converter.makeHtml(tabContent));
+	$('.preview')
+		.html(converter.makeHtml(tabContent))
+		.find('code').attr('tabindex', 1);
 
 	$('.tabs > li').removeClass('active');
 	tabEl.addClass('active');
