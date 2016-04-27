@@ -100,18 +100,22 @@ code::selection {
 }
 code {
 	cursor: pointer;
+	position: relative;
+	display: inline-block;
+	border: 1px solid #aaa;
+	line-height: 120%;
+	padding: 1px 6px;
 }
 code:focus {
 	background: #f2be38 !important;
 	border-color: rgb(137, 37, 0) !important;
 	color: rgb(137, 37, 0) !important;
 	text-shadow: 1px 1px 0 rgba(255, 255, 255, .4) !important;
-	position: relative;
 }
 code:focus:after {
 	content: "Copied to clipboard";
-	letter-spacing: 1px;
-	font: 8px/100% Arial;
+	letter-spacing: 0;
+	font: 10px/100% Arial;
 	display: inline-block;
 	background: #555;
 	color: #fff;
@@ -121,9 +125,10 @@ code:focus:after {
 	border-radius: 1px;
 	position: absolute;
 	left: 0;
-	top: -16px;
+	top: -18px;
 	opacity: 0;
 	animation: 5s pulse linear;
+	white-space: nowrap;
 }
 .nav {
 	padding-left: 0 !important;
