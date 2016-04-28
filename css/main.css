@@ -175,6 +175,17 @@ a .delete-tab:hover {
 	top: 0;
 	margin: 7px;
 }
+.sort-handler i {
+	font-size: 210%;
+	margin-top: 2px;
+	color: #aaa;
+	cursor: move;
+}
+.link-group-item-placeholder {
+	height: 34px;
+	margin-bottom: 15px;
+	border: 2px dashed #bbb;
+}
 @keyframes pulse {
 	0% {
 		opacity: 0;

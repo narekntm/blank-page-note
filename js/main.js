@@ -35,7 +35,7 @@ $(function() {
 	linksModal.on('click', '.delete-link', function(e) {
 		e.preventDefault();
 
-		deleteLink($(this).closest('.form-group'));
+		$(this).closest('.form-group').remove();
 	});
 
 	nav.on('input change', '.tab-name-input', function() {
@@ -65,6 +65,8 @@ $(function() {
 		$('.link-group').append(
 			linkTemplate
 		);
+
+		activateSortableLinks();
 	});
 
 	$(document).on('click', 'code', function() {
@@ -351,7 +353,11 @@ function setupEditor() {
 	}
 }
 
-function deleteLink(linkEl) {
-	console.log(linkEl);
-	linkEl.remove();
+function activateSortableLinks() {
+	$('.link-group')
+		.sortable('destroy')
+		.sortable({
+			handle: '.sort-handler',
+			placeholderClass: 'link-group-item-placeholder'
+		});
 }
