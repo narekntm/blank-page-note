@@ -1,6 +1,8 @@
 var converter = new Showdown.converter(),
 	tooltipTimeout,
 
+	linksModal = $('#links-modal'),
+
 	NEW_TAB_NAME = 'New Tab Name',
 	NEW_TAB_CONTENT = 'Don\'t make me think...';
 
@@ -28,6 +30,12 @@ $(function() {
 		if (force) {
 			deleteTab($(this).closest('li'));
 		}
+	});
+
+	linksModal.on('click', '.delete-link', function(e) {
+		e.preventDefault();
+
+		deleteLink($(this).closest('.form-group'));
 	});
 
 	nav.on('input change', '.tab-name-input', function() {
@@ -86,7 +94,7 @@ $(function() {
 		});
 	});
 
-	$('#links-modal').on('show.bs.modal', function (e) {
+	linksModal.on('show.bs.modal', function (e) {
 		$(this).find('.add-new-link').trigger('click');
 	});
 
@@ -341,4 +349,9 @@ function setupEditor() {
 	if (!localStorage.hasOwnProperty('content')) {
 		localStorage.setItem('content', NEW_TAB_CONTENT);
 	}
+}
+
+function deleteLink(linkEl) {
+	console.log(linkEl);
+	linkEl.remove();
 }
