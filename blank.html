@@ -24,7 +24,7 @@
 			</ul>
 
 			<div class="add-new-tab">
-				<button href="#new" class="new btn" data-toggle="tab">New Tab</button>
+				<button href="#new" class="new btn btn-default" data-toggle="tab">New Tab</button>
 			</div>
 		</div>
 
@@ -70,26 +70,30 @@
 	</div>
 
 	<div class="modal fade" id="links-modal" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-lg">
+		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header bg-primary">
 					<h4 class="modal-title">Manage links</h4>
 				</div>
 				<div class="modal-body">
 					<form class="form-horizontal">
-						<div class="form-group">
-							<label class="col-sm-2 control-label">Link</label>
+						<div class="form-group link-template hide">
 							<div class="col-sm-3">
-								<input type="name" class="form-control" placeholder="Name">
+								<input type="name" class="form-control link-name" placeholder="Name">
 							</div>
 							<div class="col-sm-7">
-								<input type="link" class="form-control" placeholder="Link">
+								<input type="link" class="form-control link-url" placeholder="Link">
+							</div>
+							<div class="col-sm-2">
+								<a href="#delete-link" class="btn btn-default btn-block">Delete</a>
 							</div>
 						</div>
 
+						<div class="link-group"></div>
+
 						<div class="form-group">
-							<div class="col-sm-offset-10 col-sm-2">
-								<button class="btn btn-xs btn-block">Add New Link</button>
+							<div class="col-sm-offset-8 col-sm-4">
+								<button class="btn btn-xs btn-default btn-block add-new-link">Add New Link</button>
 							</div>
 						</div>
 					</form>

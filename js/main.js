@@ -43,6 +43,22 @@ $(function() {
 
 		switchTab($(this));
 	});
+
+	$('.add-new-link').on('click', function(e) {
+		e.preventDefault();
+
+		var linkTemplate = $('.link-template').clone();
+
+		linkTemplate
+			.removeClass('hide')
+			.removeClass('link-template')
+			.addClass('link-group-item');
+
+		$('.link-group').append(
+			linkTemplate
+		);
+	});
+
 	$(document).on('click', 'code', function() {
 		var range, selection;
 
@@ -68,6 +84,10 @@ $(function() {
 		deleteBtn.on('click', function() {
 			button.trigger('click', [true]);
 		});
+	});
+
+	$('#links-modal').on('show.bs.modal', function (e) {
+		$(this).find('.add-new-link').trigger('click');
 	});
 
 	// to force focus and change css style
