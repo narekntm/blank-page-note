@@ -179,21 +179,19 @@ function saveLinks() {
 		linkName,
 		linkUrl;
 
-	if (linkGroupItems.length) {
-		linkGroupItems.each(function () {
-			linkName = $(this).find('.link-name').val();
-			linkUrl = $(this).find('.link-url').val();
+	linkGroupItems.each(function () {
+		linkName = $(this).find('.link-name').val();
+		linkUrl = $(this).find('.link-url').val();
 
-			if (linkName && linkUrl) {
-				links.push({
-					name: linkName,
-					url: linkUrl
-				});
-			}
-		});
+		if (linkName && linkUrl) {
+			links.push({
+				name: linkName,
+				url: linkUrl
+			});
+		}
+	});
 
-		localStorage.setItem('links', JSON.stringify(links));
-	}
+	localStorage.setItem('links', JSON.stringify(links));
 
 	linksModal.modal('hide');
 	drawLinks();
