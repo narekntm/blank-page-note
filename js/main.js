@@ -1,5 +1,4 @@
 var converter = new Showdown.converter(),
-	tooltipTimeout,
 
 	linksModal = $('#links-modal'),
 
@@ -55,18 +54,7 @@ $(function() {
 	$('.add-new-link').on('click', function(e) {
 		e.preventDefault();
 
-		var linkTemplate = $('.link-template').clone();
-
-		linkTemplate
-			.removeClass('hide')
-			.removeClass('link-template')
-			.addClass('link-group-item');
-
-		$('.link-group').append(
-			linkTemplate
-		);
-
-		activateSortableLinks();
+		drawNewLink();
 	});
 
 	$(document).on('click', 'code', function() {
@@ -102,7 +90,48 @@ $(function() {
 
 	// to force focus and change css style
 	code.attr('tabindex', 0);
+
+	drawLinks();
 });
+
+function drawLinks() {
+	if (!localStorage.hasOwnProperty('links')) {
+		localStorage.setItem('links', JSON.stringify([]));
+	}
+
+	var links = JSON.parse(localStorage.getItem('links'));
+
+	if (links.length) {
+		for (var i in links) {
+			if (links.hasOwnProperty(i)) {
+				drawNewLink(links[i]['name'], links[i]['url']);
+			}
+		}
+	}
+}
+
+function drawNewLink(name, url) {
+	var linkTemplate = $('.link-template').clone();
+
+	linkTemplate
+		.removeClass('hide')
+		.removeClass('link-template')
+		.addClass('link-group-item');
+
+	if (name) {
+		linkTemplate.find('.link-name').val(name);
+	}
+
+	if (url) {
+		linkTemplate.find('.link-url').val(url);
+	}
+
+	$('.link-group').append(
+		linkTemplate
+	);
+
+	activateSortableLinks();
+}
 
 function setupEnv() {
 	var editor = $('.editor'),
