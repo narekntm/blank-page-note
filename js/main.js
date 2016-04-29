@@ -54,7 +54,7 @@ $(function() {
 	$('.add-new-link').on('click', function(e) {
 		e.preventDefault();
 
-		drawNewLink();
+		drawNewLinkInput();
 	});
 
 	$(document).on('click', 'code', function() {
@@ -101,15 +101,14 @@ $(function() {
 	// to force focus and change css style
 	code.attr('tabindex', 0);
 
+	drawLinkInputs();
 	drawLinks();
 });
 
 function drawLinks() {
-	if (!localStorage.hasOwnProperty('links')) {
-		localStorage.setItem('links', JSON.stringify([]));
-	}
-
 	var links = JSON.parse(localStorage.getItem('links'));
+
+	$('.link-item').remove();
 
 	if (links.length) {
 		for (var i in links) {
@@ -120,12 +119,43 @@ function drawLinks() {
 	}
 }
 
-function drawNewLink(name, url) {
-	var linkTemplate = $('.link-template').clone();
+function drawNewLink(linkName, linkUrl) {
+	var linkItem = $('.link-template').clone();
+
+	linkItem
+		.removeClass('link-template')
+		.removeClass('hide')
+		.addClass('link-item');
+
+	linkItem.find('a')
+		.attr('href', linkUrl)
+		.text(linkName);
+
+	$('.links').append(linkItem);
+}
+
+function drawLinkInputs() {
+	if (!localStorage.hasOwnProperty('links')) {
+		localStorage.setItem('links', JSON.stringify([]));
+	}
+
+	var links = JSON.parse(localStorage.getItem('links'));
+
+	if (links.length) {
+		for (var i in links) {
+			if (links.hasOwnProperty(i)) {
+				drawNewLinkInput(links[i]['name'], links[i]['url']);
+			}
+		}
+	}
+}
+
+function drawNewLinkInput(name, url) {
+	var linkTemplate = $('.link-input-template').clone();
 
 	linkTemplate
 		.removeClass('hide')
-		.removeClass('link-template')
+		.removeClass('link-input-template')
 		.addClass('link-group-item');
 
 	if (name) {
@@ -166,6 +196,7 @@ function saveLinks() {
 	}
 
 	linksModal.modal('hide');
+	drawLinks();
 }
 
 function setupEnv() {
