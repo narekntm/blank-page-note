@@ -27,7 +27,7 @@ body {
 	margin-top: 20px;
 }
 footer .container {
-	margin-top: 7px;
+	margin-top: 6px;
 }
 .hr {
 	position: absolute;
@@ -48,7 +48,7 @@ footer {
 	border-top: 1px solid #aaa;
 }
 footer * {
-	font-size: 12px;
+	font: 12px Helvetica, Arial;
 }
 .modal * {
 	font-size: 14px;
