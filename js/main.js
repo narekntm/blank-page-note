@@ -1,13 +1,11 @@
 var converter = new Showdown.converter(),
-
-	linksModal = $('#links-modal'),
-
-	NEW_TAB_NAME = 'New Tab Name',
-	NEW_TAB_CONTENT = 'Don\'t make me think...';
+    NEW_TAB_NAME = 'New Tab Name',
+    NEW_TAB_CONTENT = 'Don\'t make me think...';
 
 $(function() {
 	var code = $('code'),
-		nav = $('.nav');
+	    nav = $('.nav'),
+            linksModal = $('#links-modal');
 
 	setupEditor();
 	migrate();
