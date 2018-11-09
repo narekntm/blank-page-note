@@ -1,10 +1,12 @@
+// TODO Use https://developer.chrome.com/extensions/storage as a storage
+
 var converter = new Showdown.converter(),
     NEW_TAB_NAME = 'New Tab Name',
     NEW_TAB_CONTENT = 'Don\'t make me think...';
 
 $(function() {
 	var code = $('code'),
-	    nav = $('.nav'),
+            nav = $('.nav'),
             linksModal = $('#links-modal');
 
 	setupEditor();
