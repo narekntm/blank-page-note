@@ -53,6 +53,10 @@ i.glyphicon.glyphicon-trash.delete-tab{
 i.glyphicon.glyphicon-trash.delete-tab:hover{
 	color: #a94442 !important;
 }
+.links a {
+	font: 12px Helvetica, Arial;
+	color: #d2d2d2;
+}
 
 								/*Top finish*/
 /*---------------------------------------------------------------------------*/

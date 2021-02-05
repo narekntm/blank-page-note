@@ -23,6 +23,15 @@ body {
 	color: #333;
 	overflow-y: hidden;
 }
+.editor {
+	overflow-y: scroll;
+	height: calc(100% - 115px);
+}
+
+.editor::-webkit-scrollbar {
+	display: none;
+}
+
 .container {
 	margin-top: 20px;
 }
@@ -71,7 +80,6 @@ footer * {
 
 .editor .markdown-body {
 	margin: 0 auto 50px auto;
-	padding: 10px;
 	width: 100%;
 	max-width: 1200px;
 }
@@ -296,7 +304,7 @@ label.switch {
   top: 3px;
 }
 
-.switch input { 
+.switch input {
   opacity: 0;
   width: 0;
   height: 0;
