@@ -26,6 +26,7 @@ body {
 .editor {
 	overflow-y: scroll;
 	height: calc(100% - 115px);
+	margin-top: 10px;
 }
 
 .editor::-webkit-scrollbar {
@@ -103,24 +104,25 @@ footer * {
 	width: 48%;
 }
 
-code::selection {
+code::selection, pre::selection {
 	background: transparent;
 }
-code {
+code, pre {
 	cursor: pointer;
 	position: relative;
 	display: inline-block;
 	border: 1px solid #aaa;
 	line-height: 120%;
 	padding: 1px 6px;
+    overflow: inherit !important;
 }
-code:focus {
+code:focus, pre:focus {
 	background: #f2be38 !important;
 	border-color: rgb(137, 37, 0) !important;
 	color: rgb(137, 37, 0) !important;
 	text-shadow: 1px 1px 0 rgba(255, 255, 255, .4) !important;
 }
-code:focus:after {
+code:focus:after, pre:focus:after {
 	content: "Copied to clipboard";
 	letter-spacing: 0;
 	font: 10px/100% Arial;

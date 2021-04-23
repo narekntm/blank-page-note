@@ -1,486 +1,516 @@
-// TODO Use https://developer.chrome.com/extensions/storage as a storage
+function storageSet(key, value) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.set({[key]: value}, function () {
+            if (chrome.runtime.lastError) {
+                alert("Too long data please shorten it!\nRefresh and try again.")
+            }
+            resolve(true);
+        });
+    });
+}
 
-var converter = new Showdown.converter(),
-	NEW_TAB_NAME = 'New Tab Name',
-	NEW_TAB_CONTENT = 'Don\'t make me think...';
+function storageGet(key) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.get(key, function (result) {
+            if (key) {
+                resolve(result[key]);
+            } else {
+                resolve(result);
+            }
+        });
+    });
+}
 
-$(function () {
-	var code = $('code'),
-		nav = $('.nav'),
-		linksModal = $('#links-modal');
+function storageRemove(key) {
+    return new Promise((resolve, reject) => {
+        chrome.storage.sync.remove(key, function () {
+            resolve(true);
+        });
+    });
+}
 
-	setupEditor();
-	migrate();
-	setupEnv();
+let converter = new Showdown.converter(),
+    NEW_TAB_NAME = 'New Tab Name',
+    NEW_TAB_CONTENT = 'Don\'t make me think...';
 
-	$('.new').click(function (e) {
-		e.preventDefault();
+let code = $('code'),
+  pre = $('pre'),
+  nav = $('.nav'),
+    linksModal = $('#links-modal');
 
-		if ($('.tab').length == 5) {
-			return;
-		}
+async function init() {
+    await setupEditor();
+    await migrate();
+    await setupEnv();
 
-		drawNewTab(NEW_TAB_NAME, NEW_TAB_CONTENT);
-	});
+    $('.new').click(function (e) {
+        e.preventDefault();
 
-	nav.on('click', '.delete-tab', function (e, force) {
-		e.preventDefault();
+        if ($('.tab').length == 5) {
+            return;
+        }
+        drawNewTab(NEW_TAB_NAME, NEW_TAB_CONTENT);
+    });
 
-		if (force) {
-			deleteTab($(this).closest('li'));
-		}
-	});
+    nav.on('click', '.delete-tab', async function (e, force) {
+        e.preventDefault();
 
-	linksModal.on('click', '.delete-link', function (e) {
-		e.preventDefault();
+        if (force) {
+            await deleteTab($(this).closest('li'));
+        }
+    });
 
-		$(this).closest('.form-group').remove();
-	});
+    linksModal.on('click', '.delete-link', function (e) {
+        e.preventDefault();
 
-	nav.on('input change', '.tab-name-input', function () {
-		saveTabName($(this).closest('a').attr('data-id'), $(this).val());
-	});
+        $(this).closest('.form-group').remove();
+    });
 
-	$('.tabs').on('click', '.tab', function (e) {
-		e.preventDefault();
+    nav.on('input change', '.tab-name-input', function () {
+        saveTabName($(this).closest('a').attr('data-id'), $(this).val());
+    });
 
-		if ($(e.target).hasClass('delete-tab')) {
-			return;
-		}
+    $('.tabs').on('click', '.tab', function (e) {
+        e.preventDefault();
 
-		switchTab($(this));
-	});
+        if ($(e.target).hasClass('delete-tab')) {
+            return;
+        }
+        switchTab($(this));
+    });
 
-	$('.add-new-link').on('click', function (e) {
-		e.preventDefault();
+    $('.add-new-link').on('click', function (e) {
+        e.preventDefault();
 
-		drawNewLinkInput();
-	});
+        drawNewLinkInput();
+    });
 
-	$(document).on('click', 'code', function () {
-		var range, selection;
+    $(document).on('click', 'code, pre', function () {
+        let range, selection;
 
-		selection = window.getSelection();
-		range = document.createRange();
-		range.selectNodeContents($(this)[0]);
-		selection.removeAllRanges();
-		selection.addRange(range);
+        selection = window.getSelection();
+        range = document.createRange();
+        range.selectNodeContents($(this)[0]);
+        selection.removeAllRanges();
+        selection.addRange(range);
 
-		// Copy to clipboard
-		document.execCommand('copy');
-	});
+        // Copy to clipboard
+        document.execCommand('copy');
+    });
 
-	$('#generic-modal').on('show.bs.modal', function (e) {
-		var deleteBtn = $('.delete-tab-confirm'),
-			button = $(e.relatedTarget),
-			modal = $(this),
-			tabName = button.closest('.tab').find('.tab-name-input').val();
+    $('#generic-modal').on('show.bs.modal', function (e) {
+        let deleteBtn = $('.delete-tab-confirm'),
+            button = $(e.relatedTarget),
+            modal = $(this),
+            tabName = button.closest('.tab').find('.tab-name-input').val();
 
-		modal.find('.tab-name').text(tabName);
+        modal.find('.tab-name').text(tabName);
 
-		deleteBtn.off('click');
-		deleteBtn.on('click', function () {
-			button.trigger('click', [true]);
-		});
-	});
+        deleteBtn.off('click');
+        deleteBtn.on('click', function () {
+            button.trigger('click', [true]);
+        });
+    });
 
-	linksModal.on('show.bs.modal', function (e) {
-		var links = JSON.parse(localStorage.getItem('links'));
+    linksModal.on('show.bs.modal', async function (e) {
+        let links = await storageGet('links');
 
-		if (!links.length) {
-			$(this).find('.add-new-link').trigger('click');
-		}
-	});
+        if (!links.length) {
+            $(this).find('.add-new-link').trigger('click');
+        }
+    });
 
-	$('.save-links').on('click', function (e) {
-		e.preventDefault();
+    $('.save-links').on('click', async function (e) {
+        e.preventDefault();
 
-		saveLinks();
-	});
+        await saveLinks();
+    });
 
-	// to force focus and change css style
-	code.attr('tabindex', 0);
+    // to force focus and change css style
+    code.attr('tabindex', 0);
+    pre.attr('tabindex', 0);
 
-	drawLinkInputs();
-	drawLinks();
-});
+    await drawLinkInputs();
+    await drawLinks();
+};
 
-function drawLinks() {
-	var links = JSON.parse(localStorage.getItem('links'));
+async function drawLinks() {
+    // let links = JSON.parse(await storageGet('links'));
+    let links = await storageGet('links');
+    $('.link-item').remove();
 
-	$('.link-item').remove();
-
-	if (links.length) {
-		for (var i in links) {
-			if (links.hasOwnProperty(i)) {
-				drawNewLink(links[i]['name'], links[i]['url']);
-			}
-		}
-	}
+    if (links.length) {
+        for (let i in links) {
+            if (links.hasOwnProperty(i)) {
+                drawNewLink(links[i]['name'], links[i]['url']);
+            }
+        }
+    }
 }
 
 function drawNewLink(linkName, linkUrl) {
-	var linkItem = $('.link-template').clone();
+    let linkItem = $('.link-template').clone();
 
-	linkItem
-		.removeClass('link-template')
-		.removeClass('hide')
-		.addClass('link-item');
+    linkItem
+        .removeClass('link-template')
+        .removeClass('hide')
+        .addClass('link-item');
 
-	linkItem.find('a')
-		.attr('href', linkUrl)
-		.text(linkName);
+    linkItem.find('a')
+        .attr('href', linkUrl)
+        .text(linkName);
 
-	$('.links').append(linkItem);
+    $('.links').append(linkItem);
 }
 
-function drawLinkInputs() {
-	if (!localStorage.hasOwnProperty('links')) {
-		localStorage.setItem('links', JSON.stringify([]));
-	}
+async function drawLinkInputs() {
+    if (!await storageGet('links')) {
+        await storageSet('links', []);
+    }
 
-	var links = JSON.parse(localStorage.getItem('links'));
+    let links = await storageGet('links');
 
-	if (links.length) {
-		for (var i in links) {
-			if (links.hasOwnProperty(i)) {
-				drawNewLinkInput(links[i]['name'], links[i]['url']);
-			}
-		}
-	}
+    if (links.length) {
+        for (let i in links) {
+            if (links.hasOwnProperty(i)) {
+                drawNewLinkInput(links[i]['name'], links[i]['url']);
+            }
+        }
+    }
 }
 
 function drawNewLinkInput(name, url) {
-	var linkTemplate = $('.link-input-template').clone();
+    let linkTemplate = $('.link-input-template').clone();
 
-	linkTemplate
-		.removeClass('hide')
-		.removeClass('link-input-template')
-		.addClass('link-group-item');
+    linkTemplate
+        .removeClass('hide')
+        .removeClass('link-input-template')
+        .addClass('link-group-item');
 
-	if (name) {
-		linkTemplate.find('.link-name').val(name);
-	}
+    if (name) {
+        linkTemplate.find('.link-name').val(name);
+    }
 
-	if (url) {
-		linkTemplate.find('.link-url').val(url);
-	}
+    if (url) {
+        linkTemplate.find('.link-url').val(url);
+    }
 
-	$('.link-group').append(
-		linkTemplate
-	);
+    $('.link-group').append(
+        linkTemplate
+    );
 
-	activateSortableLinks();
+    activateSortableLinks();
 }
 
-function saveLinks() {
-	var links = [],
-		linkGroupItems = $('.link-group-item'),
-		linkName,
-		linkUrl;
+async function saveLinks() {
+    let links = [],
+        linkGroupItems = $('.link-group-item'),
+        linkName,
+        linkUrl;
 
-	linkGroupItems.each(function () {
-		linkName = $(this).find('.link-name').val();
-		linkUrl = $(this).find('.link-url').val();
+    linkGroupItems.each(function () {
+        linkName = $(this).find('.link-name').val();
+        linkUrl = $(this).find('.link-url').val();
 
-		if (linkName && linkUrl) {
-			links.push({
-				name: linkName,
-				url: linkUrl
-			});
-		}
-	});
+        if (linkName && linkUrl) {
+            links.push({
+                name: linkName,
+                url: linkUrl
+            });
+        }
+    });
 
-	localStorage.setItem('links', JSON.stringify(links));
+    await storageSet('links', links);
 
-	linksModal.modal('hide');
-	drawLinks();
+    linksModal.modal('hide');
+    drawLinks();
 }
 
-function setupEnv() {
-	var editor = $('.editor'),
-		source = $('.source'),
-		preview = $('.preview'),
-		switcher = $('.switcher');
+async function setupEnv() {
+    let editor = $('.editor'),
+        source = $('.source'),
+        preview = $('.preview'),
+        switcher = $('.switcher');
 
-	drawTabs();
-	var activeTabId = setFirstTabActive();
+    await drawTabs();
+    let activeTabId = setFirstTabActive();
+    if (await drawTabContent(activeTabId)) {
+        source.keyup(function () {
+            let tabContentSource = source.val(),
+                tabContentPreview = converter.makeHtml(tabContentSource),
+                tabId = $('.tabs li.active a').attr('data-id');
 
-	if (drawTabContent(activeTabId)) {
-		source.keyup(function () {
-			var tabContentSource = source.val(),
-				tabContentPreview = converter.makeHtml(tabContentSource),
-				tabId = $('.tabs li.active a').attr('data-id');
+            saveTabContent(tabId, tabContentSource);
+            preview.html(tabContentPreview);
+            preview.find('code').attr('tabindex', 1);
+            preview.find('pre').attr('tabindex', 1);
+        });
 
-			saveTabContent(tabId, tabContentSource);
-			preview.html(tabContentPreview);
-			preview.find('code').attr('tabindex', 1);
-		});
+        switcher.on('click', function (e) {
+            e.preventDefault();
 
-		switcher.on('click', function (e) {
-			e.preventDefault();
-
-			if (switcher.text() == 'Enable') {
-				editor.addClass('active');
-				source.trigger('input');
-				switcher.text('Disable');
-			} else {
-				editor.removeClass('active');
-				switcher.text('Enable');
-			}
-		});
-	}
+            if (switcher.text() == 'Enable') {
+                editor.addClass('active');
+                source.trigger('input');
+                switcher.text('Disable');
+            } else {
+                editor.removeClass('active');
+                switcher.text('Enable');
+            }
+        });
+    }
 }
 
-function saveTabContent(tabId, tabContent) {
-	var tabsData = JSON.parse(localStorage.getItem('data'));
+async function saveTabContent(tabId, tabContent) {
+    let tabsData = await storageGet('data');
 
-	tabsData[tabId]['content'] = tabContent;
-	localStorage.setItem('data', JSON.stringify(tabsData));
+    tabsData[tabId]['content'] = tabContent;
+    await storageSet('data', tabsData);
 }
 
-function saveTabName(tabId, tabName) {
-	var tabsData = JSON.parse(localStorage.getItem('data'));
+async function saveTabName(tabId, tabName) {
+    let tabsData = await storageGet('data');
 
-	tabsData[tabId]['name'] = tabName;
-	localStorage.setItem('data', JSON.stringify(tabsData));
+    tabsData[tabId]['name'] = tabName;
+    await storageSet('data', tabsData);
 }
 
-function drawTabContent(tabId) {
-	var tabData = getTabData(tabId),
-		tabContentMd = tabData.content;
+async function drawTabContent(tabId) {
+    let tabData = await getTabData(tabId),
+        tabContentMd = tabData.content;
+    if (tabData === false) {
+        alert('Cannot draw a tab with id #' + tabId);
+        return false;
+    }
 
-	if (tabData === false) {
-		alert('Cannot draw a tab with id #' + tabId);
+    $('.source').val(tabContentMd);
+    $('.preview').html(
+        converter.makeHtml(
+            converter.makeHtml(tabContentMd)
+        )
+    ).find('code, pre').attr('tabindex', 1);
 
-		return false;
-	}
-
-	$('.source').val(tabContentMd);
-	$('.preview').html(
-		converter.makeHtml(
-			converter.makeHtml(tabContentMd)
-		)
-	).find('code').attr('tabindex', 1);
-
-	return true;
+    return true;
 }
 
-function drawTabs() {
-	var data = JSON.parse(localStorage.getItem('ids'));
-
-	for (var index in data) {
-		if (data.hasOwnProperty(index)) {
-			drawTab(data[index], index == 0);
-		}
-	}
+async function drawTabs() {
+    let data = await storageGet('ids');
+    for (let index in data) {
+        if (data.hasOwnProperty(index)) {
+            await drawTab(data[index], index == 0);
+        }
+    }
 }
 
-function saveNewTabData(tabId, tabName, tabContent) {
-	var tabData = JSON.parse(localStorage.getItem('data')),
-		idList = JSON.parse(localStorage.getItem('ids'));
+async function saveNewTabData(tabId, tabName, tabContent) {
+    let tabData = await storageGet('data'),
+        idList = await storageGet('ids');
+    idList.push(tabId);
+    tabData[tabId] = {
+        name: tabName,
+        content: tabContent
+    };
 
-	idList.push(tabId);
-	tabData[tabId] = {
-		name: tabName,
-		content: tabContent
-	};
-
-	localStorage.setItem('ids', JSON.stringify(idList));
-	localStorage.setItem('data', JSON.stringify(tabData));
+    await storageSet('ids', idList);
+    await storageSet('data', tabData);
 }
 
-function drawTab(tabId, isPersistant) {
-	var tabData = getTabData(tabId),
-		tabName = tabData.name;
-
-	drawTabElement(tabId, tabName, isPersistant);
+async function drawTab(tabId, isPersistant) {
+    let tabData = await getTabData(tabId),
+        tabName = tabData.name;
+    drawTabElement(tabId, tabName, isPersistant);
 }
 
-function drawNewTab(tabName, tabContent) {
-	var tabId = getNextTabId(),
-		tabEl;
+async function drawNewTab(tabName, tabContent) {
+    let tabId = await getNextTabId(),
+        tabEl;
+    console.log(tabId)
+    tabEl = drawTabElement(tabId, tabName, false);
 
-	tabEl = drawTabElement(tabId, tabName, false);
-
-	saveNewTabData(tabId, tabName, tabContent);
-	switchTab(tabEl);
+    await saveNewTabData(tabId, tabName, tabContent);
+    await switchTab(tabEl);
 }
 
 function drawTabElement(tabId, tabName, isPersistant) {
-	var tabEl = $('.tab-template.hide').clone(),
-		aEl;
+    let tabEl = $('.tab-template.hide').clone(),
+        aEl;
 
-	if (isPersistant) {
-		tabEl.find('.delete-tab').remove();
-	}
+    if (isPersistant) {
+        tabEl.find('.delete-tab').remove();
+    }
 
-	tabEl
-		.removeClass('tab-template')
-		.removeClass('hide')
-		.addClass('tab');
+    tabEl
+        .removeClass('tab-template')
+        .removeClass('hide')
+        .addClass('tab');
 
-	aEl = tabEl.find('a');
-	aEl.attr({
-		'data-name': '#' + tabName.replace(' ', '_').toLowerCase(),
-		'data-id': tabId,
-	});
+    aEl = tabEl.find('a');
+    aEl.attr({
+        'data-name': '#' + tabName.replace(' ', '_').toLowerCase(),
+        'data-id': tabId,
+    });
 
-	tabEl.find('.tab-name-input').val(tabName);
+    tabEl.find('.tab-name-input').val(tabName);
 
-	$('.tabs').append(tabEl);
+    $('.tabs').append(tabEl);
 
-	return tabEl;
+    return tabEl;
 }
 
-function getNextTabId() {
-	var data = JSON.parse(localStorage.data),
-		maxId = 0,
-		id;
+async function getNextTabId() {
+    let data = await storageGet("ids"),
+        maxId = 0,
+        id;
+    console.log(data)
+    for (id of data) {
+        console.log(id)
 
-	for (id in data) {
-		id = parseInt(id);
-
-		if (id > maxId) {
-			maxId = id;
-		}
-	}
-
-	return ++maxId;
+        id = parseInt(id);
+        console.log("id:", id)
+        if (id > maxId) {
+            maxId = id;
+        }
+    }
+    console.log("maxid: ", maxId)
+    return ++maxId;
 }
 
-function getTabData(tabId) {
-	var tabData = JSON.parse(localStorage.getItem('data'));
+async function getTabData(tabId) {
+    let tabData = await storageGet('data');
+    if (tabData.hasOwnProperty(tabId)) {
+        return tabData[tabId];
+    }
 
-	if (tabData.hasOwnProperty(tabId)) {
-		return tabData[tabId];
-	}
+    await removeTabId(tabId);
 
-	removeTabId(tabId);
-
-	return false;
+    return false;
 }
 
-function removeTabId(tabId) {
-	var tabIdList = JSON.parse(localStorage.getItem('ids'));
+async function removeTabId(tabId) {
+    let tabIdList = await storageGet('ids');
 
-	for (var id in tabIdList) {
-		if (id == tabId) {
-			delete tabIdList[tabId];
-		}
-	}
+    for (let id in tabIdList) {
+        if (id == tabId) {
+            delete tabIdList[tabId];
+        }
+    }
 }
 
 function setFirstTabActive() {
-	var firstTab = $('.tab').eq(0);
-	firstTab.addClass('active');
+    let firstTab = $('.tab').eq(0);
+    firstTab.addClass('active');
 
-	return firstTab.find('a').attr('data-id');
+    return firstTab.find('a').attr('data-id');
 }
 
-function switchTab(tabEl) {
-	var tabData = JSON.parse(localStorage.getItem('data')),
-		tabId = parseInt(tabEl.find('a').attr('data-id')),
-		tabContent = tabData[tabId]['content'];
+async function switchTab(tabEl) {
+    let tabData = await storageGet('data')
+    let tabId = parseInt(tabEl.find('a').attr('data-id'))
+    let tabContent = tabData[tabId]['content'];
 
-	$('.source').val(tabContent);
-	$('.preview')
-		.html(converter.makeHtml(tabContent))
-		.find('code').attr('tabindex', 1);
+    $('.source').val(tabContent);
+    $('.preview')
+        .html(converter.makeHtml(tabContent))
+        .find('code, pre').attr('tabindex', 1);
 
-	$('.tabs > li').removeClass('active');
-	tabEl.addClass('active');
+    $('.tabs > li').removeClass('active');
+    tabEl.addClass('active');
 }
 
-function deleteTab(tabEl) {
-	var idList = JSON.parse(localStorage.getItem('ids')),
-		tabId = parseInt(tabEl.find('a').attr('data-id'));
+async function deleteTab(tabEl) {
+    let idList = await storageGet('ids'),
+        data = await storageGet("data"),
+        tabId = parseInt(tabEl.find('a').attr('data-id'));
 
-	for (var i = 0; i < idList.length; i++) {
-		if (idList[i] == tabId) {
-			idList.splice(i, 1);
-			break;
-		}
-	}
+    for (let i = 0; i < idList.length; i++) {
+        if (idList[i] == tabId) {
+            idList.splice(i, 1);
+            delete data[tabId];
+            break;
+        }
+    }
 
-	localStorage.setItem('ids', JSON.stringify(idList));
-	tabEl.remove();
+    await storageSet('ids', idList);
+    await storageSet('data', data);
+    tabEl.remove();
 
-	setTimeout(function () {
-		switchTab($('.tab').eq(0));
-	}, 1);
+    setTimeout(function () {
+        switchTab($('.tab').eq(0));
+    }, 1);
 }
 
-function migrate() {
-	if (localStorage.getItem('v') == 1) {
-		localStorage.setItem('data', JSON.stringify({
-			1: {
-				name: 'General',
-				content: localStorage.getItem('content')
-			}
-		}));
-		localStorage.setItem('ids', JSON.stringify([1]));
-	}
+async function migrate() {
+    if (await storageGet('v') == 1) {
+        await storageSet('data', {
+            1: {
+                name: 'General',
+                content: await storageGet('content')
+            }
+        });
+        await storageSet('ids', [1]);
+    }
 
-	if (localStorage.hasOwnProperty('account')) {
-		localStorage.removeItem('account');
-	}
-
-	localStorage.removeItem('content');
-	localStorage.setItem('v', 2);
+    if (await storageGet('account')) {
+        await storageRemove('account');
+    }
+    await storageRemove('content');
+    await storageSet('v', 2);
 }
 
-function setupEditor() {
-	$(window).resize(function () {
-		$('.source').css({
-			height: (window.innerHeight - 123) + 'px'
-		});
-	}).trigger('resize');
+async function setupEditor() {
+    $(window).resize(function () {
+        $('.source').css({
+            height: (window.innerHeight - 123) + 'px'
+        });
+    }).trigger('resize');
 
-	if (!localStorage.hasOwnProperty('v')) {
-		localStorage.setItem('v', 1);
-	}
+    if (!await storageGet('v')) {
+        await storageSet('v', 1);
+    }
 
-	if (!localStorage.hasOwnProperty('content')) {
-		localStorage.setItem('content', NEW_TAB_CONTENT);
-	}
+    if (!await storageGet('content')) {
+        await storageSet('content', NEW_TAB_CONTENT);
+    }
 }
 
 function activateSortableLinks() {
-	$('.link-group')
-		.sortable('destroy')
-		.sortable({
-			handle: '.sort-handler',
-			placeholderClass: 'link-group-item-placeholder'
-		});
+    $('.link-group')
+        .sortable('destroy')
+        .sortable({
+            handle: '.sort-handler',
+            placeholderClass: 'link-group-item-placeholder'
+        });
 }
 
-let storageDarkMode = localStorage.getItem('Dark Mode On/Off');
-let checkbox = document.querySelector("input[id=darkMode]");
-let darkModeCss = document.getElementById("darkModeCss");
+async function darkModeInit() {
+    let storageDarkMode = await storageGet('Dark Mode On/Off');
+    let checkbox = document.querySelector("input[id=darkMode]");
+    let darkModeCss = document.getElementById("darkModeCss");
 
-if (typeof storageDarkMode == undefined) {
-	storageDarkMode = false;
-	darkModeCss.disabled = true;
-	checkbox.checked = false;
-} else if (storageDarkMode == "on") {
-	storageDarkMode = true;
-	darkModeCss.disabled = false;
-	checkbox.checked = true;
-} else {
-	storageDarkMode = false;
-	darkModeCss.disabled = true;
-	checkbox.checked = false;
-};
+    if (typeof storageDarkMode == undefined) {
+        storageDarkMode = false;
+        darkModeCss.disabled = true;
+        checkbox.checked = false;
+    } else if (storageDarkMode == "on") {
+        storageDarkMode = true;
+        darkModeCss.disabled = false;
+        checkbox.checked = true;
+    } else {
+        storageDarkMode = false;
+        darkModeCss.disabled = true;
+        checkbox.checked = false;
+    }
+    checkbox.addEventListener('change', async function () {
+        if (this.checked) {
+            await storageSet('Dark Mode On/Off', "on")
+            darkModeCss.disabled = false;
 
+        } else {
+            await storageSet('Dark Mode On/Off', "off")
+            darkModeCss.disabled = true;
+        }
+    });
+}
+init()
+darkModeInit()
 
-checkbox.addEventListener('change', function () {
-	if (this.checked) {
-		localStorage.setItem('Dark Mode On/Off', "on")
-		darkModeCss.disabled = false;
-
-	} else {
-		localStorage.setItem('Dark Mode On/Off', "off")
-		darkModeCss.disabled = true;
-	}
-});

@@ -83,7 +83,7 @@ textarea.source {
 }
 
 /*note's code fields*/
-.markdown-body code {
+.markdown-body code, .markdown-body pre {
 	background-color:#172426;
 	color: #84e4e0;
 	border-radius: 5px;
