@@ -29,7 +29,7 @@ function storageRemove(key) {
     });
 }
 
-let converter = new Showdown.converter(),
+let converter = new showdown.Converter(),
     NEW_TAB_NAME = 'New Tab Name',
     NEW_TAB_CONTENT = 'Don\'t make me think...';
 
@@ -324,7 +324,6 @@ async function drawTab(tabId, isPersistant) {
 async function drawNewTab(tabName, tabContent) {
     let tabId = await getNextTabId(),
         tabEl;
-    console.log(tabId)
     tabEl = drawTabElement(tabId, tabName, false);
 
     await saveNewTabData(tabId, tabName, tabContent);
@@ -361,17 +360,12 @@ async function getNextTabId() {
     let data = await storageGet("ids"),
         maxId = 0,
         id;
-    console.log(data)
     for (id of data) {
-        console.log(id)
-
         id = parseInt(id);
-        console.log("id:", id)
         if (id > maxId) {
             maxId = id;
         }
     }
-    console.log("maxid: ", maxId)
     return ++maxId;
 }
 
